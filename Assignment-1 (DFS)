@@ -1,0 +1,73 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+def get_user_graph():
+    graph = {}
+    print("Enter the graph (e.g., A B to represent edge A-B). Type 'done' when finished:")
+    while True:
+        edge = input("Edge: ")
+        if edge.lower() == 'done':
+            break
+        try:
+            node1, node2 = edge.strip().split()
+            if node1 not in graph:
+                graph[node1] = []
+            if node2 not in graph:
+                graph[node2] = []
+            graph[node1].append(node2)
+            graph[node2].append(node1)  # For undirected graph
+        except:
+            print("Invalid input. Please enter two nodes separated by space.")
+    return graph
+
+def dfs(graph, start, visited=None, path=None):
+    if visited is None:
+        visited = set()
+    if path is None:
+        path = []
+
+    visited.add(start)
+    path.append(start)
+
+    for neighbor in graph.get(start, []):
+        if neighbor not in visited:
+            dfs(graph, neighbor, visited, path)
+
+    return path
+
+def visualize_graph(graph, dfs_path):
+    G = nx.Graph()
+
+    # Add edges
+    for node in graph:
+        for neighbor in graph[node]:
+            G.add_edge(node, neighbor)
+
+    pos = nx.spring_layout(G)  # Layout for nodes
+
+    # Draw full graph
+    nx.draw(G, pos, with_labels=True, node_color='lightblue', edge_color='gray', node_size=2000, font_size=14)
+
+    # Draw DFS path as red edges
+    dfs_edges = list(zip(dfs_path, dfs_path[1:]))
+    nx.draw_networkx_edges(G, pos, edgelist=dfs_edges, edge_color='red', width=2)
+
+    plt.title("DFS Traversal Path (in red)")
+    plt.show()
+
+def main():
+    graph = get_user_graph()
+    print("\nGraph:", graph)
+
+    start_node = input("Enter the start node for DFS: ")
+    if start_node not in graph:
+        print("Start node not in graph!")
+        return
+
+    path = dfs(graph, start_node)
+    print("DFS Traversal:", path)
+
+    visualize_graph(graph, path)
+
+if __name__ == "__main__":
+    main()
