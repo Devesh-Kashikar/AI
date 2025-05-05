@@ -1,0 +1,29 @@
+def bfs(graph, visited, start):
+    queue = [start]
+    visited.add(start)
+
+    while queue:
+        node = queue.pop(0)
+        print(node, end=' ')
+        for neighbour in graph.get(node, []):
+            if neighbour not in visited:
+                visited.add(neighbour)
+                queue.append(neighbour)
+
+def main():
+    graph = {}
+    n = int(input("Enter number of nodes: "))
+
+    for _ in range(n):
+        node = input("Enter node label (e.g. A, 1, etc.): ")
+        edges = input(f"Enter neighbors of {node} separated by space: ").split()
+        graph[node] = edges
+
+    start = input("Enter starting node: ")
+
+    print("\nBFS Traversal:")
+    bfs(graph, set(), start)
+
+if __name__ == "__main__":
+    main()
+
